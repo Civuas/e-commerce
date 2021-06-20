@@ -1,0 +1,11 @@
+.text-center{
+    text-align: center;
+}
+.Heading{
+    /*margin: 100px;*/
+    margin-top: 25px;
+    padding: 70px;
+    border: 1px solid black;
+    border-radius: 25px;
+}
+
