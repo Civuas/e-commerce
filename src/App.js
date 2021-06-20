@@ -14,7 +14,7 @@ function App() {
         <Route path="/" exact>
           <Home />
         </Route>
-        <Route path="/category:id" exact>
+        <Route path="/category/:id" exact>
           <Category />
         </Route>
         <Route path="/checkout" exact>
