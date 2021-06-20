@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
+import { Col, Row } from 'rsuite';
 import givenProducts from '../db/products.json';
-import { Col } from 'rsuite';
 
 const Category = ({ category }) => {
   const [products] = useState(
     givenProducts.filter(p => p.categoryId === category.id)
   );
-
   return (
-    <Col>
-      <div>
-        <h2>TODO</h2>
-      </div>
-    </Col>
+    <Row>
+      <Col>
+        <h2>{category.name}</h2>
+        <div>
+          <Products products={givenProducts} />
+        </div>
+      </Col>
+    </Row>
   );
 };
 
