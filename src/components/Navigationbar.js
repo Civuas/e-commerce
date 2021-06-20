@@ -7,7 +7,7 @@ const Navigationbar = () => (
   <Navbar>
     <Navbar.Header>
       <a href="/" className="navbar-brand logo">
-        RSUITE
+        E-Commerce
       </a>
     </Navbar.Header>
     <Navbar.Body>
