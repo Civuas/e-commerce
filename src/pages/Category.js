@@ -1,8 +1,26 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Button } from 'rsuite';
 import categories from '../db/categories.json';
 import givenProducts from '../db/products.json';
+import Products from '../components/Products';
+import FilterCheckBox from '../components/FilterCheckBox';
+import { useFilters } from '../libs/useFilter';
+
+function getComputedProducts(products, filters) {
+  let result = [...products];
+
+  if (filters.delivery) {
+    result = result.filter(p => p.delivery === true);
+  }
+  if (filters.inStock) {
+    result = result.filter(p => p.inStock === true);
+  }
+  if (filters.expensive) {
+    result = result.filter(p => p.price > 100);
+  }
+
+  return result;
+}
 
 const Category = () => {
   const { id } = useParams();
@@ -11,45 +29,57 @@ const Category = () => {
 
   const categoryName = category.name;
 
-  // eslint-disable-next-line no-unused-vars
   const [products] = useState(givenProducts.filter(p => p.categoryId === id));
+
+  const [filter, disptachFilter] = useFilters({
+    delivery: false,
+    inStock: false,
+    expensive: false,
+  });
+
+  const filteredProducts = getComputedProducts(products, filter);
+
+  const onCheckboxChange = useCallback(
+    ev => {
+      const checkbox = ev.target;
+      disptachFilter({
+        type: 'SET',
+        filterName: checkbox.name,
+        value: checkbox.checked,
+      });
+    },
+    [disptachFilter]
+  );
 
   return (
     <div>
       <div>
         <h3>Filters</h3>
-        <div>
-          <input type="checkbox" id="delivery" name="delivery" checked />
-          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-          <label htmlFor="delivery">Delivery</label>
-        </div>
+        <FilterCheckBox
+          id="delivery"
+          name="delivery"
+          checked={filter.delivery}
+          onChange={onCheckboxChange}
+          label="Delivery"
+        />
+        <FilterCheckBox
+          id="inStock"
+          name="inStock"
+          checked={filter.inStock}
+          onChange={onCheckboxChange}
+          label="inStock"
+        />
+        <FilterCheckBox
+          id="expensive"
+          name="expensive"
+          checked={filter.expensive}
+          onChange={onCheckboxChange}
+          label="Expensive (over 100$)"
+        />
       </div>
       <h3>{categoryName}</h3>
       <div>
-        {products.map(
-          ({
-            currency,
-            delivery,
-            inStock,
-            name,
-            price,
-            thumbnail,
-            ...restOfProduct
-          }) => (
-            <div key={restOfProduct.id}>
-              <img src={thumbnail} alt={name} width={50} />
-              <div>{name}</div>
-              <div>
-                {currency} {price}
-              </div>
-              <div>{inStock ? 'In Stock' : 'Out of Stock'}</div>
-              {delivery && <div>Delivery Avaliable</div>}
-              <Button appearance="ghost" disabled={!inStock}>
-                Add To Cart
-              </Button>
-            </div>
-          )
-        )}
+        <Products products={filteredProducts} />
       </div>
     </div>
   );
