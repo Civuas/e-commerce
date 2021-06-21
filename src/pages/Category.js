@@ -22,14 +22,10 @@ function getComputedProducts(products, filters) {
   return result;
 }
 
-const Category = () => {
-  const { id } = useParams();
-
-  const category = categories.find(c => c.id === id);
-
-  const categoryName = category.name;
-
-  const [products] = useState(givenProducts.filter(p => p.categoryId === id));
+const Category = ({ category }) => {
+  const [products] = useState(
+    givenProducts.filter(p => p.categoryId === category.id)
+  );
 
   const [filter, disptachFilter] = useFilters({
     delivery: false,
@@ -77,7 +73,7 @@ const Category = () => {
           label="Expensive (over 100$)"
         />
       </div>
-      <h3>{categoryName}</h3>
+      <h3>{category.name}</h3>
       <div>
         <Products products={filteredProducts} />
       </div>
@@ -85,4 +81,16 @@ const Category = () => {
   );
 };
 
-export default Category;
+const CategoryContainer = () => {
+  const { id } = useParams();
+
+  const category = categories.find(c => c.id === id);
+
+  if (!category) {
+    return <div>Categry with id {id} does not exist</div>;
+  }
+
+  return <Category category={category} />;
+};
+
+export default CategoryContainer;
